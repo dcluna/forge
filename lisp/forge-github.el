@@ -389,7 +389,8 @@ repositories.
                   (magit-split-branch-name forge--buffer-base-branch))
                  (`(,head-remote . ,head-branch)
                   (magit-split-branch-name forge--buffer-head-branch))
-                 (head-repo (forge-get-repository 'stub head-remote)))
+                 (head-repo (forge-get-repository 'stub head-remote))
+                 (draft (y-or-n-p "Draft pull request?")))
       (forge--ghub-post repo "/repos/:owner/:repo/pulls"
                         `((title . , .title)
                           (body  . , .body)
@@ -398,10 +399,11 @@ repositories.
                                         head-branch
                                       (concat (oref head-repo owner) ":"
                                               head-branch)))
-                          (draft . ,(y-or-n-p "Draft pull request?"))
+                          (draft . ,draft)
                           (maintainer_can_modify . t))
                         :callback  (forge--post-submit-callback)
-                        :errorback (forge--post-submit-errorback)))))
+                        :errorback (forge--post-submit-errorback)
+                        :headers (if draft '(("Accept" . "application/vnd.github.shadow-cat-preview+json")))))))
 
 (cl-defmethod forge--submit-create-issue ((_ forge-github-repository) repo)
   (let-alist (forge--topic-parse-buffer)
