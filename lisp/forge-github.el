@@ -398,6 +398,7 @@ repositories.
                                         head-branch
                                       (concat (oref head-repo owner) ":"
                                               head-branch)))
+                          (draft . ,(y-or-n-p "Draft pull request?"))
                           (maintainer_can_modify . t))
                         :callback  (forge--post-submit-callback)
                         :errorback (forge--post-submit-errorback)))))
